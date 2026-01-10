@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,22 +11,24 @@ class GeminiService extends _$GeminiService {
   GenerativeModel? _model;
   bool _isInitialized = false;
   String? _initError;
-
-  // List of API keys for rotation - add your keys here
-  static const List<String> _apiKeys = [
-    'AIzaSyBtt0n3T8aab1BfdviBwVlt4iolgCuF4-s',
-    'AIzaSyAHudXQUA4NxpKA3UubRBSPLnZoZ3bnRp0',
-    'AIzaSyA9j93cXNgO0rKSW1I2BkgfcpuQk104lrw',
-    // Key 1
-    // Add more API keys here:
-    // 'YOUR_SECOND_API_KEY',
-    // 'YOUR_THIRD_API_KEY',
-  ];
+  late final List<String> _apiKeys;
 
   int _currentKeyIndex = 0;
 
+  List<String> _loadApiKeys() {
+    final keys = <String>[];
+    for (int i = 1; i <= 10; i++) {
+      final key = dotenv.env['GEMINI_API_KEY_$i'];
+      if (key != null && key.isNotEmpty) {
+        keys.add(key);
+      }
+    }
+    return keys;
+  }
+
   @override
   FutureOr<void> build() async {
+    _apiKeys = _loadApiKeys();
     _initializeModel();
   }
 
