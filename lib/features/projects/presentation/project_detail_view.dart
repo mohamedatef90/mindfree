@@ -19,6 +19,7 @@ import 'package:mindfree/core/widgets/delete_dialog.dart';
 import 'package:mindfree/features/home/presentation/home_screen.dart' show projectColors, projectEmojis, DetailedAddTaskSheet;
 import 'package:mindfree/data/models/project.dart';
 import 'package:mindfree/data/models/task.dart';
+import 'package:mindfree/features/notes/presentation/document_capture_sheet.dart';
 
 class ProjectDetailView extends ConsumerStatefulWidget {
   final int projectId;
@@ -257,66 +258,115 @@ class _ProjectDetailViewState extends ConsumerState<ProjectDetailView> {
                                           Center(child: Text('Error: $err')),
                                     ),
                                     // Notes List
-                                    notesAsync.when(
-                                      data: (notes) {
-                                        if (notes.isEmpty) {
-                                          return Center(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.note_alt_outlined,
-                                                  size: 48,
-                                                  color: Colors.white
-                                                      .withValues(alpha: 0.2),
+                                    Column(
+                                      children: [
+                                        // Scanner button row
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () => _showDocumentScanner(context),
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 8,
                                                 ),
-                                                const SizedBox(height: 16),
-                                                const Text(
-                                                  'No notes yet',
-                                                  style: TextStyle(
-                                                      color: Colors.white54),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.secondary.withValues(alpha: 0.15),
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  border: Border.all(
+                                                    color: AppColors.secondary.withValues(alpha: 0.3),
+                                                  ),
                                                 ),
-                                              ],
-                                            ),
-                                          );
-                                        }
-                                        return RefreshIndicator(
-                                          onRefresh: () async {
-                                            ref.invalidate(notesByParentProvider(
-                                                0, widget.projectId));
-                                          },
-                                          child: ListView.builder(
-                                            itemCount: notes.length,
-                                            itemBuilder: (context, index) =>
-                                                GestureDetector(
-                                              onTap: () => context.push(
-                                                '/note_editor',
-                                                extra: notes[index],
-                                              ),
-                                              child: GlassCard(
-                                                margin: const EdgeInsets.only(
-                                                  bottom: 12,
-                                                ),
-                                                padding: const EdgeInsets.all(
-                                                  16,
-                                                ),
-                                                child: Text(
-                                                  notes[index].content,
-                                                  maxLines: 3,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.document_scanner_rounded,
+                                                      color: AppColors.secondary,
+                                                      size: 18,
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      'Scan',
+                                                      style: TextStyle(
+                                                        color: AppColors.secondary,
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
+                                        // Notes list
+                                        Expanded(
+                                          child: notesAsync.when(
+                                            data: (notes) {
+                                              if (notes.isEmpty) {
+                                                return Center(
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.note_alt_outlined,
+                                                        size: 48,
+                                                        color: Colors.white
+                                                            .withValues(alpha: 0.2),
+                                                      ),
+                                                      const SizedBox(height: 16),
+                                                      const Text(
+                                                        'No notes yet',
+                                                        style: TextStyle(
+                                                            color: Colors.white54),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+                                              return RefreshIndicator(
+                                                onRefresh: () async {
+                                                  ref.invalidate(notesByParentProvider(
+                                                      0, widget.projectId));
+                                                },
+                                                child: ListView.builder(
+                                                  itemCount: notes.length,
+                                                  itemBuilder: (context, index) =>
+                                                      GestureDetector(
+                                                    onTap: () => context.push(
+                                                      '/note_editor',
+                                                      extra: notes[index],
+                                                    ),
+                                                    child: GlassCard(
+                                                      margin: const EdgeInsets.only(
+                                                        bottom: 12,
+                                                      ),
+                                                      padding: const EdgeInsets.all(
+                                                        16,
+                                                      ),
+                                                      child: Text(
+                                                        notes[index].content,
+                                                        maxLines: 3,
+                                                        overflow:
+                                                            TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            loading: () => const Center(
+                                              child: CircularProgressIndicator(),
+                                            ),
+                                            error: (err, _) =>
+                                                Center(child: Text('Error: $err')),
                                           ),
-                                        );
-                                      },
-                                      loading: () => const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                      error: (err, _) =>
-                                          Center(child: Text('Error: $err')),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -709,6 +759,19 @@ class _ProjectDetailViewState extends ConsumerState<ProjectDetailView> {
       isScrollControlled: true,
       builder: (context) =>
           DetailedAddTaskSheet(initialProjectId: widget.projectId),
+    );
+  }
+
+  void _showDocumentScanner(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => DocumentCaptureSheet(
+          parentId: widget.projectId,
+          parentType: 0, // 0 = Project
+          projectId: widget.projectId,
+        ),
+      ),
     );
   }
 

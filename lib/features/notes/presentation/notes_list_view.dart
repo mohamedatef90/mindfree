@@ -227,11 +227,11 @@ class _NotesListViewState extends ConsumerState<NotesListView> {
   }
 
   void _showDocumentCapture() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const DocumentCaptureSheet(),
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => const DocumentCaptureSheet(),
+      ),
     );
   }
 }
