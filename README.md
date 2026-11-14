@@ -7,7 +7,7 @@ MindFree is a premium, AI-powered productivity and mindfulness application built
 - **🧠 AI Assistant**: Integrated with Google Gemini for intelligent insights and conversational assistance.
 - **📅 Smart Task Management**: Organize your life with a flexible task system, including calendar integration and reorderable grid views.
 - **📝 Fluid Note-Taking**: Capture thoughts instantly in a clean, distraction-free environment.
-- **🚀 Immersive UI**: Experience a "journey scroll" effect with a global 3D space background and high-performance micro-animations.
+- **🚀 Immersive UI**: Dark glassmorphism styling with micro-animations (Flutter Animate).
 - **🎙️ Voice Integration**: Speech-to-text capabilities for hands-free productivity.
 - **📂 Project Organization**: Group your tasks and notes into dedicated projects.
 - **🔔 Live Activities**: Stay updated with real-time task progress directly on your Lock Screen (iOS).
@@ -34,7 +34,7 @@ MindFree is a premium, AI-powered productivity and mindfulness application built
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/mindfree.git
+   git clone https://github.com/mohamedatef90/mindfree.git
    cd mindfree
    ```
 
@@ -43,12 +43,14 @@ MindFree is a premium, AI-powered productivity and mindfulness application built
    flutter pub get
    ```
 
-3. **Generate local code**:
+3. **Configure your Gemini key(s)**: copy `.env.example` to `.env` and set `GEMINI_API_KEY_1` (optionally `GEMINI_API_KEY_2` to `GEMINI_API_KEY_10`; the app reads keys `_1` to `_10` and rotates when a quota is exceeded). `.env` is loaded at startup and is declared as an asset in `pubspec.yaml`, so the file must exist.
+
+4. **Generate local code**:
    ```bash
    flutter pub run build_runner build --delete-conflicting-outputs
    ```
 
-4. **Run the application**:
+5. **Run the application**:
    ```bash
    flutter run
    ```
@@ -67,8 +69,7 @@ lib/
 
 MindFree is designed to be more than just a tool; it's an experience. The UI leverages:
 - **Glassmorphism**: Subtle translucent layers for a modern aesthetic.
-- **Dynamic Space Field**: A unique 3D background that responds to user interaction and scroll depth.
-- **Premium Typography**: Using `Outfit` and `Inter` for maximum readability and class.
+- **Typography**: Google Fonts (`Outfit` for the theme text styles).
 
 ---
 
